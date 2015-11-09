@@ -1020,10 +1020,10 @@ def Get_FD_slope(col, base, n, order):
         elif order == 4:
             slope = ( 177. / 16 - 299. / 32 + 163. / 48 - 25. / 64 ) * doc[base] - 177. / 16 * doc[name_list[0]] + 299. / 32 * doc[name_list[1]] - 163. / 48 * doc[name_list[2]] + 25. / 64 * doc[name_list[3]]
         col.update({'_id':doc['_id']},{'$set':{name: slope}})
-        print doc
-        print doc[name]
-        if i > 5:
-            sys.exit(0)
+#        print doc
+#        print doc[name]
+#        if i > 5:
+#            sys.exit(0)
     print 'Got ' + name
 
 
@@ -1047,42 +1047,67 @@ if __name__ == '__main__':
             Get_Bindicator(coll)            
     else:
         ##--update one collection
-        if sys.argv[1] in collection_list:
-            #Get_ADL(db[sys.argv[1]])
-            #Get_Aroon(db[sys.argv[1]])
-            Get_TR(db[sys.argv[1]])
-            #Get_DM(db[sys.argv[1]])
-            #Get_ADX(db[sys.argv[1]])
-            #Get_ATR(db[sys.argv[1]])
-            #Get_BB(db[sys.argv[1]])
-            #Get_Bindicator(db[sys.argv[1]])
-            #Get_CGI(db[sys.argv[1]])
-            #Get_CopCv(db[sys.argv[1]])
-            #Get_CMF(db[sys.argv[1]])
-            #Get_Chaikin_osc(db[sys.argv[1]])
-            #Get_PMO(db[sys.argv[1]])
-            #Get_DPO(db[sys.argv[1]], 20)
-            #Get_EMV(db[sys.argv[1]])
-            #Get_FI(db[sys.argv[1]])
-            #Get_MI(db[sys.argv[1]])
-            #Get_MACD_PPO(db[sys.argv[1]])
-            #Get_MFI(db[sys.argv[1]])
-            #Get_NVI(db[sys.argv[1]])
-            #Get_OBV(db[sys.argv[1]])
-            #Get_PVO(db[sys.argv[1]])
-            #Get_KST(db[sys.argv[1]])
-            #Get_SpecK(db[sys.argv[1]])
-            #Get_RSI(db[sys.argv[1]])
-            #Get_SO(db[sys.argv[1]])
-            #Get_StochRSI(db[sys.argv[1]])
-            #Get_TRIX(db[sys.argv[1]])
-            #Get_TSI(db[sys.argv[1]])
-            #Get_UlcerI(db[sys.argv[1]])
-            #Get_UO(db[sys.argv[1]])
-            #Get_VI(db[sys.argv[1]])
-            #Get_WillR(db[sys.argv[1]])
-            #Get_x_n(db[sys.argv[1]], 'Close', 30, 1)
-            Get_FD_slope(db[sys.argv[1]], 'Close', 1, 4)
-        else:
-            print 'Collection'+sys.argv[1]+' does not exist!'
+        list = sys.argv[1].split('+')
+        print list
+        #if sys.argv[1] in collection_list:
+        for coll_name in list:
+            print coll_name
+            coll = db[coll_name]
+            #Get_ADL(coll)
+            #Get_Aroon(coll)
+            #Get_TR(coll)
+            #Get_DM(coll)
+            #Get_ADX(coll)
+            #Get_ATR(coll)
+            #Get_BB(coll)
+            #Get_Bindicator(coll)
+            #Get_CGI(coll)
+            #Get_CopCv(coll)
+            #Get_CMF(coll)
+            #Get_Chaikin_osc(coll)
+            #Get_PMO(coll)
+            #Get_DPO(coll, 20)
+            #Get_EMV(coll)
+            #Get_FI(coll)
+            #Get_MI(coll)
+            #Get_MACD_PPO(coll)
+            #Get_MFI(coll)
+            #Get_NVI(coll)
+            #Get_OBV(coll)
+            #Get_PVO(coll)
+            #Get_KST(coll)
+            #Get_SpecK(coll)
+            #Get_RSI(coll)
+            #Get_SO(coll)
+            #Get_StochRSI(coll)
+            #Get_TRIX(coll)
+            #Get_TSI(coll)
+            #Get_UlcerI(coll)
+            #Get_UO(coll)
+            #Get_VI(coll)
+            #Get_WillR(coll)
+            Get_x_n(coll, 'Close', 30, 1)
+            Get_x_n(coll, 'Close', 30, 5)
+            Get_x_n(coll, 'Close', 30, 10)
+            Get_x_n(coll, 'Close', 30, 20)
+            Get_FD_slope(coll, 'Close', 1, 1)
+            Get_FD_slope(coll, 'Close', 1, 2)
+            Get_FD_slope(coll, 'Close', 1, 3)
+            Get_FD_slope(coll, 'Close', 1, 4)
+            Get_FD_slope(coll, 'Close', 5, 1)
+            Get_FD_slope(coll, 'Close', 5, 2)
+            Get_FD_slope(coll, 'Close', 5, 3)
+            Get_FD_slope(coll, 'Close', 5, 4)
+            Get_FD_slope(coll, 'Close', 10, 1)
+            Get_FD_slope(coll, 'Close', 10, 2)
+            Get_FD_slope(coll, 'Close', 10, 3)
+            Get_FD_slope(coll, 'Close', 10, 4)
+            Get_FD_slope(coll, 'Close', 20, 1)
+            Get_FD_slope(coll, 'Close', 20, 2)
+            Get_FD_slope(coll, 'Close', 20, 3)
+            Get_FD_slope(coll, 'Close', 20, 4)
+#        else:
+#            print 'Collection'+sys.argv[1]+' does not exist!'
+
+
 
