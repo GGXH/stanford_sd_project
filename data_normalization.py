@@ -67,6 +67,7 @@ if __name__ == '__main__':
     ##--connect to mongo client and database
     mongo_client = MongoClient()
     db = mongo_client.raw_data
+    db_process = mongo_client.process_data
     data_not_normal = ['data_id', 'Date']
     ##--
     if sys.argv[1] in db.collection_names():
@@ -77,8 +78,8 @@ if __name__ == '__main__':
         Normalize_data(data_list, coll_name_list)
         new_name = sys.argv[1]+'_norm'
         db[new_name].drop()
-        Put_data_db(db, new_name, data_list)
+        Put_data_db(db_process, new_name, data_list)
         ##--
-        doc = db[new_name].find_one()
+        doc = db_process[new_name].find_one()
         print doc
-        print db[new_name].count()
+        print db_process[new_name].count()
