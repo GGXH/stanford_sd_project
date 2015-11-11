@@ -31,7 +31,9 @@ def Get_close_price_diff(coll):
 if __name__ == '__main__':
     mongoclient = MongoClient()
     db = mongoclient.process_data
-    for coll_name in db.collection_names()[1:]:
+    coll_name = sys.argv[1]+'_norm'
+    print db.collection_names()
+    if coll_name in db.collection_names()[1:]:
         print coll_name
         coll = db[coll_name]
         Get_stock_movement(coll, 'movement1')

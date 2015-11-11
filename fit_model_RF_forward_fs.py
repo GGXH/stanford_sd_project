@@ -1,7 +1,7 @@
 import sys
 from pymongo import MongoClient
 import numpy as np
-from sklearn import linear_model
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.externals import joblib
 import copy
 
@@ -46,8 +46,8 @@ if __name__ == '__main__':
         ##---
         best_variable_i = []
         best_variable_l = []
-        all_output = open('all_output_logistical_regression.txt', 'wb')
-        best_output = open('best_output_logistical_regression.txt', 'wb')
+        all_output = open(sys.argv[1]+'_all_output_RF_regression.txt', 'wb')
+        best_output = open(sys.argv[1]+'_best_output_RF_regression.txt', 'wb')
         variable_list_tmp = copy.deepcopy(variable_list)
         while len(variable_list_tmp) > 0:
             best_error = 2000000
@@ -61,7 +61,7 @@ if __name__ == '__main__':
                     try_variable_l.append(variable_list[i])
                     try_train_x = train_x[:, try_variable_i]
                     try_val_x = val_x[:,try_variable_i]
-                    clf = linear_model.LogisticRegression()
+                    clf = RandomForestClassifier()
                     clf.fit(try_train_x, train_y)
                     val_y_pred = clf.predict(try_val_x)
                     train_y_pred = clf.predict(try_train_x)
@@ -72,7 +72,7 @@ if __name__ == '__main__':
                         best_error = diff_val_y
                         best_i = i
                         clf_best = clf
-            file_name = 'AA_logistical_'+str(len(variable_list) - len(variable_list_tmp) + 1)+'.pkl'
+            file_name = sys.argv[1]+'_RF_'+str(len(variable_list) - len(variable_list_tmp) + 1)+'.pkl'
             joblib.dump(clf_best, file_name, compress=9)
             best_variable_i.append(best_i)
             best_variable_l.append(variable_list[best_i])
