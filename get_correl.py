@@ -25,12 +25,20 @@ def Get_correl(variable, y_name):
     name_list = variable[0].keys()
     name_list = Remove_list(name_list, name_list_unwanted)
     corr = {}
+    y_list = []
+    for item in variable:
+        y_list.append(item[y_name])
+    y_list = np.array(y_list)
+    mean = np.mean(y_list)
+    std = np.std(y_list)
+    print mean, std
+    ##--
     for name in name_list:
         corr[name] = 0
     if y_name in name_list:
         for item in variable:
             for name in name_list:
-                corr[name] += item[name] * item[y_name]
+                corr[name] += item[name] * ( item[y_name] - mean ) / std
     else:
         print y_name+' is not a variable'
     return corr
