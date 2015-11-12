@@ -1,7 +1,7 @@
 import sys
 from pymongo import MongoClient
 import numpy as np
-from sklearn import linear_model
+from sklearn.decomposition import TruncatedSVD
 from sklearn.externals import joblib
 
 def Get_data_local(coll, variable_list, y_name, i_start, i_end):
@@ -20,17 +20,12 @@ def Get_data_local(coll, variable_list, y_name, i_start, i_end):
     return variable, y
 
 
-def Get_data(coll, variable_list, y_name, val_ratio=0.3, test_ratio=0.0001):
+def Get_data(coll, variable_list, y_name):
     '''Get data from collection'''
     name_list_unwanted = ['_id', 'data_id', 'Date', 'price_diff', 'movement1']
     data_number = coll.count()
-    train_data_no = int(data_number * ( 1 - val_ratio - test_ratio ))
-    val_data_no = int(data_number * val_ratio)
-    test_data_no = data_number - train_data_no - val_data_no
-    train_x, train_y = Get_data_local(coll, variable_list, y_name, 1, train_data_no)
-    val_x, val_y = Get_data_local(coll, variable_list, y_name, train_data_no+1, train_data_no+val_data_no)
-    test_x, test_y = Get_data_local(coll, variable_list, y_name, train_data_no+val_data_no+1, data_number)
-    return train_x, train_y, val_x, val_y, test_x, test_y
+    train_x, train_y = Get_data_local(coll, variable_list, y_name, 1, data_number)
+    return train_x, train_y
 
 
 if __name__ == '__main__':
@@ -41,22 +36,10 @@ if __name__ == '__main__':
     coll_name = sys.argv[1] + '_norm'
     if coll_name in db.collection_names():
         coll = db[coll_name]
-        train_x, train_y, val_x, val_y, test_x, test_y = Get_data(coll, variable_list, 'movement1')
+        train_x, train_y = Get_data(coll, variable_list, 'movement1')
         ##---
-        clf = linear_model.LogisticRegression()
-        clf.fit(train_x, train_y)
-        joblib.dump(clf, sys.argv[1]+'_logistical.pkl', compress=9)
-        val_y_pred = clf.predict(val_x)
-        train_y_pred = clf.predict(train_x)
-        diff_val_y = sum(abs(val_y_pred - val_y)/2)
-        diff_train_y = sum(abs(train_y_pred - train_y)/2)
-        print val_y.shape, val_x.shape
-        print diff_val_y
-        print train_y.shape, train_x.shape
-        print diff_train_y
-        #print clf.coef_
-        #print val_y_pred
-        #print val_y
-        #print diff_y
-
-        
+        for n in [5, 10, 15, 20, 50, 100, 200]:
+            svd = TruncatedSVD(n_components=n)
+            svd.fit(train_x)
+            joblib.dump(svd, sys.argv[1] + '_SVD_' + str(n) + '.pkl', compress=9)
+            print svd.explained_variance_ratio_

@@ -46,7 +46,7 @@ if __name__ == '__main__':
         ##---
         clf = svm.SVC()
         clf.fit(train_x, train_y)
-        joblib.dump(clf, 'AA_SVM_SVC.pkl', compress=9)
+        joblib.dump(clf, sys.argv[1]+'_SVM_SVC.pkl', compress=9)
         val_y_pred = clf.predict(val_x)
         train_y_pred = clf.predict(train_x)
         diff_val_y = sum(abs(val_y_pred - val_y)/2)

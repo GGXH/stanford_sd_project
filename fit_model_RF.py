@@ -45,7 +45,7 @@ if __name__ == '__main__':
         ##---
         clf = RandomForestClassifier()
         clf.fit(train_x, train_y)
-        joblib.dump(clf, 'AA_RF.pkl', compress=9)
+        joblib.dump(clf, sys.argv[1]+'_RF.pkl', compress=9)
         val_y_pred = clf.predict(val_x)
         train_y_pred = clf.predict(train_x)
         diff_val_y = sum(abs(val_y_pred - val_y)/2)
