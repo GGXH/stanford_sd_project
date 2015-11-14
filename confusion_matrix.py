@@ -2,6 +2,8 @@ import sys
 from pymongo import MongoClient
 import numpy as np
 from sklearn import linear_model
+from sklearn.ensemble import RandomForestClassifier
+from sklearn import svm
 from sklearn.externals import joblib
 
 def Get_data_local(coll, variable_list, y_name, i_start, i_end):
@@ -66,9 +68,12 @@ if __name__ == '__main__':
         coll = db[coll_name]
         train_x, train_y, val_x, val_y, test_x, test_y = Get_data(coll, variable_list, 'movement1')
         ##---
+        svd_t = joblib.load(sys.argv[1]+'_SVD_139.pkl')
+        train_x_svd = svd_t.transform(train_x)
+        val_x_svd = svd_t.transform(val_x)
         clf = joblib.load(sys.argv[2])
-        val_y_pred = clf.predict(val_x)
-        train_y_pred = clf.predict(train_x)
+        val_y_pred = clf.predict(val_x_svd)
+        train_y_pred = clf.predict(train_x_svd)
         confusion_matrix_val = Get_confusion_matrix(val_y, val_y_pred)
         confusion_matrix_train = Get_confusion_matrix(train_y, train_y_pred)
         name_list = sys.argv[2].split('.')
