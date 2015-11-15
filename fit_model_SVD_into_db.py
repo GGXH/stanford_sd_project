@@ -1,31 +1,26 @@
 import sys
 from pymongo import MongoClient
 import numpy as np
-from sklearn.decomposition import TruncatedSVD
 from sklearn.externals import joblib
 
-def Get_data_local(coll, variable_list, y_name, i_start, i_end):
+def Get_data_local(coll, variable_list):
     '''Get data from collection local'''
     variable = []
-    y = []
-    for i in range(i_start, i_end+1):
+    for i in range(1, coll.count()+1):
         local_variable = []
         doc = coll.find_one({'data_id':i})
         for name in variable_list:
             local_variable.append(doc[name])
         variable.append(local_variable)
-        y.append(doc[y_name])
     variable = np.array(variable)
-    y = np.array(y)
-    return variable, y
+    return variable
 
-
-def Get_data(coll, variable_list, y_name):
-    '''Get data from collection'''
-    name_list_unwanted = ['_id', 'data_id', 'Date', 'price_diff', 'movement1']
-    data_number = coll.count()
-    train_x, train_y = Get_data_local(coll, variable_list, y_name, 1, data_number)
-    return train_x, train_y
+def Put_data_into_db(coll, x, var_name):
+    '''put the data into db with name var_name'''
+    for i in range(1, x.shape[0]+1):
+        doc = coll.find_one({'data_id': i})
+        for j in range(0, x.shape[1]):
+            coll.update({'_id':doc['_id']}, {'$set':{var_name+'_'+str(j+1):x[i-1, j]}})
 
 
 if __name__ == '__main__':
@@ -36,15 +31,17 @@ if __name__ == '__main__':
     coll_name = sys.argv[1] + '_norm'
     if coll_name in db.collection_names():
         coll = db[coll_name]
-        train_x, train_y = Get_data(coll, variable_list, 'movement1')
+        x = Get_data_local(coll, variable_list)
         ##---
-        for n in [5]:
-            svd = TruncatedSVD(n_components=n)
-            svd.fit(train_x)
-            joblib.dump(svd, sys.argv[1] + '_SVD_' + str(n) + '.pkl', compress=9)
-            print svd.explained_variance_ratio_
+        svd = joblib.load(sys.argv[2])
+        x_svd = svd.transform(x)
+        Put_data_into_db(coll, x_svd, 'svd')
 
 
 
 
+
+
+
+        
 
