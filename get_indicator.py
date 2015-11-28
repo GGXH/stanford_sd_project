@@ -1014,23 +1014,55 @@ def Get_FD_slope(col, base, n, order):
     name_list = []
     for i in range(1,order+1):
         name_list.append(base+'_'+str(n)+'_'+str(i))
-    name = 'Slope_'+str(n)+'_'+str(order)
+    name = 'Slope_' + str(n) + '_' + str(order)
+    name1 = 'Slope_half_' + str(n) + '_' + str(order)
     for i in range(1,col.count()+1):
         doc = col.find_one({'data_id':i})
         if order == 1:
             slope = doc[base] - doc[name_list[0]]
         elif order == 2:
-            slope = 2 * doc[base] - 3 * doc[name_list[0]] + doc[name_list[1]]
+            slope = 1.5 * doc[base] - 2 * doc[name_list[0]] + 0.5 * doc[name_list[1]]
+            slope1 = 2 * doc[base] - 3 * doc[name_list[0]] + doc[name_list[1]]
         elif order == 3:
-            slope = ( 26 * doc[base] - 57 * doc[name_list[0]] + 42 * doc[name_list[1]] - 11 * doc[name_list[2]] ) / 6.
+            slope = ( 11 * doc[base] - 18 * doc[name_list[0]] + 9 * doc[name_list[1]] - 2 * doc[name_list[2]] ) / 6.
+            slope1 = ( 71 * doc[base] - 141 * doc[name_list[0]] + 93 * doc[name_list[1]] - 23 * doc[name_list[2]] ) / 24.
         elif order == 4:
-            slope = ( 177. / 16 - 299. / 32 + 163. / 48 - 25. / 64 ) * doc[base] - 177. / 16 * doc[name_list[0]] + 299. / 32 * doc[name_list[1]] - 163. / 48 * doc[name_list[2]] + 25. / 64 * doc[name_list[3]]
+            slope = ( 25 * doc[base] - 48 * doc[name_list[0]] + 36 * doc[name_list[1]] - 16 * doc[name_list[2]] + 3 * doc[name_list[3]] ) / 12.
+            slope1 = ( 93 * doc[base] - 229 * doc[name_list[0]] + 225 * doc[name_list[1]] - 111 * doc[name_list[2]] + 22 * doc[name_list[3]] ) / 24.
+        if order != 1:
+            col.update({'_id':doc['_id']},{'$set':{name1: slope1}})
         col.update({'_id':doc['_id']},{'$set':{name: slope}})
 #        print doc
 #        print doc[name]
 #        if i > 5:
 #            sys.exit(0)
     print 'Got ' + name
+
+
+
+def Get_Pred_base_slope(col, base, n, order):
+    '''Get next base with finite difference method'''
+    name_list = []
+    for i in range(1,order+1):
+        name_list.append(base+'_'+str(n)+'_'+str(i))
+    name = 'Pred_' + base + '_' + str(n) + '_' + str(order)
+    for i in range(1,col.count()+1):
+        doc = col.find_one({'data_id':i})
+        if order == 1:
+            slope = 2 * doc[base] - doc[name_list[0]]
+        elif order == 2:
+            slope = 3 * doc[base] - 3 * doc[name_list[0]] + doc[name_list[1]]
+        elif order == 3:
+            slope = 4 * doc[base] - 6 * doc[name_list[0]] + 4 * doc[name_list[1]] - doc[name_list[2]]
+        elif order == 4:
+            slope = 5. * doc[base] - 10. * doc[name_list[0]] + 10. * doc[name_list[1]] - 5. * doc[name_list[2]] + doc[name_list[3]]
+        col.update({'_id':doc['_id']},{'$set':{name: slope}})
+#        print doc
+#        print doc[name]
+#        if i > 5:
+#            sys.exit(0)
+    print 'Got ' + name
+
 
 
 if __name__ == '__main__':
@@ -1059,43 +1091,47 @@ if __name__ == '__main__':
         for coll_name in list:
             print coll_name
             coll = db[coll_name]
-            Get_ADL(coll)
-            Get_Aroon(coll)
-            Get_TR(coll)
-            Get_DM(coll)
-            Get_ADX(coll)
-            Get_ATR(coll)
-            Get_BB(coll)
-            Get_Bindicator(coll)
-            Get_CGI(coll)
-            Get_CopCv(coll)
-            Get_CMF(coll)
-            Get_Chaikin_osc(coll)
-            Get_PMO(coll)
-            Get_DPO(coll, 20)
-            Get_EMV(coll)
-            Get_FI(coll)
-            Get_MI(coll)
-            Get_MACD_PPO(coll)
-            Get_MFI(coll)
-            Get_NVI(coll)
-            Get_OBV(coll)
-            Get_PVO(coll)
-            Get_KST(coll)
-            Get_SpecK(coll)
-            Get_RSI(coll)
-            Get_SO(coll)
-            Get_StochRSI(coll)
-            Get_TRIX(coll)
-            Get_TSI(coll)
-            Get_UlcerI(coll)
-            Get_UO(coll)
-            Get_VI(coll)
-            Get_WillR(coll)
-            Get_x_n(coll, 'Close', 30, 1)
-            Get_x_n(coll, 'Close', 30, 5)
-            Get_x_n(coll, 'Close', 30, 10)
-            Get_x_n(coll, 'Close', 30, 20)
+            #Get_ADL(coll)
+            #Get_Aroon(coll)
+            #Get_TR(coll)
+            #Get_DM(coll)
+            #Get_ADX(coll)
+            #Get_ATR(coll)
+            #Get_BB(coll)
+            #Get_Bindicator(coll)
+            #Get_CGI(coll)
+            #Get_CopCv(coll)
+            #Get_CMF(coll)
+            #Get_Chaikin_osc(coll)
+            #Get_PMO(coll)
+            #Get_DPO(coll, 20)
+            #Get_EMV(coll)
+            #Get_FI(coll)
+            #Get_MI(coll)
+            #Get_MACD_PPO(coll)
+            #Get_MFI(coll)
+            #Get_NVI(coll)
+            #Get_OBV(coll)
+            #Get_PVO(coll)
+            #Get_KST(coll)
+            #Get_SpecK(coll)
+            #Get_RSI(coll)
+            #Get_SO(coll)
+            #Get_StochRSI(coll)
+            #Get_TRIX(coll)
+            #Get_TSI(coll)
+            #Get_UlcerI(coll)
+            #Get_UO(coll)
+            #Get_VI(coll)
+            #Get_WillR(coll)
+            #Get_x_n(coll, 'Close', 30, 1)
+            #Get_x_n(coll, 'Close', 30, 5)
+            #Get_x_n(coll, 'Close', 30, 10)
+            #Get_x_n(coll, 'Close', 30, 20)
+            Get_Pred_base_slope(coll, 'Close', 1, 1)
+            Get_Pred_base_slope(coll, 'Close', 1, 2)
+            Get_Pred_base_slope(coll, 'Close', 1, 3)
+            Get_Pred_base_slope(coll, 'Close', 1, 4)
             Get_FD_slope(coll, 'Close', 1, 1)
             Get_FD_slope(coll, 'Close', 1, 2)
             Get_FD_slope(coll, 'Close', 1, 3)

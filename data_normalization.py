@@ -77,7 +77,7 @@ if __name__ == '__main__':
         data_list = Collect_data_collection(coll)
         Normalize_data(data_list, coll_name_list)
         new_name = sys.argv[1]+'_norm'
-        db[new_name].drop()
+        db_process[new_name].drop()
         Put_data_db(db_process, new_name, data_list)
         ##--
         doc = db_process[new_name].find_one()

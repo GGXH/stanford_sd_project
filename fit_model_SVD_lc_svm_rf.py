@@ -24,7 +24,7 @@ def Get_data_local(coll, variable_list, y_name, i_start, i_end):
 
 def Get_data(coll, variable_list, y_name, val_ratio=0.3, test_ratio=0.0001):
     '''Get data from collection'''
-    name_list_unwanted = ['_id', 'data_id', 'Date', 'price_diff', 'movement1']
+    name_list_unwanted = ['_id', 'data_id', 'Date', 'price_diff', 'movement1', 'price_diff_km_2', 'price_diff_km_3', 'price_diff_km_4', 'price_diff_km_5']
     data_number = coll.count()
     train_data_no = int(data_number * ( 1 - val_ratio - test_ratio ))
     val_data_no = int(data_number * val_ratio)
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     coll_name = sys.argv[1] + '_norm'
     if coll_name in db.collection_names():
         coll = db[coll_name]
-        train_x, train_y, val_x, val_y, test_x, test_y = Get_data(coll, variable_list, 'movement1')
+        train_x, train_y, val_x, val_y, test_x, test_y = Get_data(coll, variable_list, sys.argv[4])
         ##---
         svd = joblib.load(sys.argv[2])
         train_x_svd = svd.transform(train_x)
@@ -51,15 +51,15 @@ if __name__ == '__main__':
         if sys.argv[3] == 'lc':
             clf = linear_model.LogisticRegression()
             clf.fit(train_x_svd, train_y)
-            joblib.dump(clf, sys.argv[1]+'_svd_logistical.pkl', compress=9)
+            joblib.dump(clf, sys.argv[1]+'_svd_logistical'+sys.argv[4]+'.pkl', compress=9)
         elif sys.argv[3] == 'svm':
             clf = svm.SVC()
             clf.fit(train_x_svd, train_y)
-            joblib.dump(clf, sys.argv[1]+'_svd_svm_svc.pkl', compress=9)
+            joblib.dump(clf, sys.argv[1]+'_svd_svm_svc'+sys.argv[4]+'.pkl', compress=9)
         elif sys.argv[3] == 'RF':
             clf = RandomForestClassifier()
             clf.fit(train_x_svd, train_y)
-            joblib.dump(clf, sys.argv[1]+'_svd_RF.pkl', compress=9)
+            joblib.dump(clf, sys.argv[1]+'_svd_RF'+sys.argv[4]+'.pkl', compress=9)
         val_y_pred = clf.predict(val_x_svd)
         train_y_pred = clf.predict(train_x_svd)
         diff_val_y = sum(abs(val_y_pred - val_y)/2)

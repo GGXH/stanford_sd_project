@@ -6,10 +6,19 @@ from sklearn.externals import joblib
 def Get_data_local(coll, variable_list):
     '''Get data from collection local'''
     variable = []
+    #print coll.count()
+    #doc = coll.find_one({'data_id':13535})
+    #print doc
+    #doc = coll.find_one({'data_id':13534})
+    #print doc
+    #doc = coll.find_one({'data_id':13536})
+    #print doc
+    #sys.exit(0)
     for i in range(1, coll.count()+1):
         local_variable = []
         doc = coll.find_one({'data_id':i})
         for name in variable_list:
+            #print name, i
             local_variable.append(doc[name])
         variable.append(local_variable)
     variable = np.array(variable)
