@@ -67,7 +67,7 @@ if __name__ == '__main__':
     ##--connect to mongo client and database
     mongo_client = MongoClient()
     db = mongo_client.raw_data
-    db_process = mongo_client.process_data
+    db_process = mongo_client.process_data_new
     data_not_normal = ['data_id', 'Date']
     ##--
     if sys.argv[1] in db.collection_names():

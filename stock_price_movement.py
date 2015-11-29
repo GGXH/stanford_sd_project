@@ -30,7 +30,7 @@ def Get_close_price_diff(coll):
 
 if __name__ == '__main__':
     mongoclient = MongoClient()
-    db = mongoclient.process_data
+    db = mongoclient.process_data_new
     coll_name = sys.argv[1]+'_norm'
     print db.collection_names()
     if coll_name in db.collection_names()[1:]:

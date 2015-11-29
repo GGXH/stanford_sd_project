@@ -100,8 +100,8 @@ if __name__ == '__main__':
         coll = db[coll_name]
         train_x, train_y, val_x, val_y, test_x, test_y = Get_data(coll, 'movement1')
         ##---
-        for feature_no in [5, 10, 20, 50, 100]:
-            file_name_pre = sys.argv[1] + '_svd_' + str(feature_no) + '_' + sys.argv[2]
+        for feature_no in [200]:
+            file_name_pre = sys.argv[1] + '_' + str(feature_no) + '_' + sys.argv[2]
             f = open(file_name_pre+'_confusion.txt', 'wb')
             if sys.argv[2] == 'lc':
                 for pen in ['l1', 'l2']:
