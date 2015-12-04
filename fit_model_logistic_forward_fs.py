@@ -33,52 +33,95 @@ def Get_data(coll, variable_list, y_name, val_ratio=0.3, test_ratio=0.0001):
     test_x, test_y = Get_data_local(coll, variable_list, y_name, train_data_no+val_data_no+1, data_number)
     return train_x, train_y, val_x, val_y, test_x, test_y
 
+def Get_confusion_matrix(real_y, pred_y):
+    '''Get confusion matrix'''
+    confusion_matrix = {'FN': 0, 'FP': 0, 'TN': 0, 'TP': 0}
+    total = len(real_y)
+    for i in range(0, total):
+        if real_y[i] < 0:
+            if pred_y[i] < 0:
+                confusion_matrix['TN'] += 1
+            else:
+                confusion_matrix['FP'] += 1
+        else:
+            if pred_y[i] < 0:
+                confusion_matrix['FN'] += 1
+            else:
+                confusion_matrix['TP'] += 1
+    print confusion_matrix
+    confusion_matrix['accuracy'] = ( confusion_matrix['TP'] + confusion_matrix['TN'] ) * 1. / total
+    confusion_matrix['recall'] = confusion_matrix['TP'] * 1. / ( confusion_matrix['TP'] + confusion_matrix['FN'] )
+    confusion_matrix['F1'] = confusion_matrix['TP'] * 2. / ( 2. * confusion_matrix['TP'] + confusion_matrix['FN'] + confusion_matrix['FP'] )
+    tmp = confusion_matrix['TP'] * confusion_matrix['TN'] - confusion_matrix['FP'] * confusion_matrix['FN']
+    if tmp != 0:
+        confusion_matrix['MCC'] = tmp * 1. / ( (  confusion_matrix['TP'] +  confusion_matrix['FP'] ) * (  confusion_matrix['TP'] +  confusion_matrix['FN'] ) * (  confusion_matrix['TN'] +  confusion_matrix['FP'] ) * (  confusion_matrix['TN'] +  confusion_matrix['FN'] ) )**0.5
+    else:
+        confusion_matrix['MCC'] = 0
+    if confusion_matrix['TP'] == 0 and confusion_matrix['FP'] == 0:
+        confusion_matrix['precision'] = 0
+    else:
+        confusion_matrix['precision'] = confusion_matrix['TP'] * 1. / ( confusion_matrix['TP'] + confusion_matrix['FP'] )
+    return confusion_matrix
 
 if __name__ == '__main__':
-    variable_list = ['ADL', 'ADX', 'ATR', 'Adj Close', 'Adj High', 'Adj Low', 'Adj Open', 'Adj Volume', 'Aroon_down', 'Aroon_osc', 'Aroon_up', 'BBB', 'BP', 'CGI', 'CMF_20', 'Chain_osc', 'Close', 'Close_10_1', 'Close_10_10', 'Close_10_11', 'Close_10_12', 'Close_10_13', 'Close_10_14', 'Close_10_15', 'Close_10_16', 'Close_10_17', 'Close_10_18', 'Close_10_19', 'Close_10_2', 'Close_10_20', 'Close_10_21', 'Close_10_22', 'Close_10_23', 'Close_10_24', 'Close_10_25', 'Close_10_26', 'Close_10_27', 'Close_10_28', 'Close_10_29', 'Close_10_3', 'Close_10_30', 'Close_10_4', 'Close_10_5', 'Close_10_6', 'Close_10_7', 'Close_10_8', 'Close_10_9', 'Close_1_1', 'Close_1_10', 'Close_1_11', 'Close_1_12', 'Close_1_13', 'Close_1_14', 'Close_1_15', 'Close_1_16', 'Close_1_17', 'Close_1_18', 'Close_1_19', 'Close_1_2', 'Close_1_20', 'Close_1_21', 'Close_1_22', 'Close_1_23', 'Close_1_24', 'Close_1_25', 'Close_1_26', 'Close_1_27', 'Close_1_28', 'Close_1_29', 'Close_1_3', 'Close_1_30', 'Close_1_4', 'Close_1_5', 'Close_1_6', 'Close_1_7', 'Close_1_8', 'Close_1_9', 'Close_20_1', 'Close_20_10', 'Close_20_11', 'Close_20_12', 'Close_20_13', 'Close_20_14', 'Close_20_15', 'Close_20_16', 'Close_20_17', 'Close_20_18', 'Close_20_19', 'Close_20_2', 'Close_20_20', 'Close_20_21', 'Close_20_22', 'Close_20_23', 'Close_20_24', 'Close_20_25', 'Close_20_26', 'Close_20_27', 'Close_20_28', 'Close_20_29', 'Close_20_3', 'Close_20_30', 'Close_20_4', 'Close_20_5', 'Close_20_6', 'Close_20_7', 'Close_20_8', 'Close_20_9', 'Close_5_1', 'Close_5_10', 'Close_5_11', 'Close_5_12', 'Close_5_13', 'Close_5_14', 'Close_5_15', 'Close_5_16', 'Close_5_17', 'Close_5_18', 'Close_5_19', 'Close_5_2', 'Close_5_20', 'Close_5_21', 'Close_5_22', 'Close_5_23', 'Close_5_24', 'Close_5_25', 'Close_5_26', 'Close_5_27', 'Close_5_28', 'Close_5_29', 'Close_5_3', 'Close_5_30', 'Close_5_4', 'Close_5_5', 'Close_5_6', 'Close_5_7', 'Close_5_8', 'Close_5_9', 'CopCv', 'DI14N', 'DI14P', 'DMN', 'DMN_14WSM', 'DMP', 'DMP_14WSM', 'DPO', 'DX', 'EMV', 'Ex-Dividend', 'FI1', 'FI13', 'High', 'KST', 'KST_sng_line', 'LBB', 'Low', 'MACD_hist', 'MACD_line', 'MBB', 'MFI', 'MFM', 'MFV', 'MI', 'NVI', 'OBV', 'Open', 'PBI', 'PMO_line', 'PMO_sign_line', 'PPO', 'PPO_hist', 'PVI', 'PVO_hist', 'PVO_line', 'RCMA1', 'RCMA2', 'RCMA3', 'RCMA4', 'ROC_10', 'ROC_100', 'ROC_11', 'ROC_14', 'ROC_15', 'ROC_195', 'ROC_20', 'ROC_265', 'ROC_30', 'ROC_390', 'ROC_40', 'ROC_530', 'ROC_65', 'ROC_75', 'RS', 'RSI', 'SK1', 'SK10', 'SK11', 'SK12', 'SK2', 'SK3', 'SK4', 'SK5', 'SK6', 'SK7', 'SK8', 'SK9', 'Slope_10_1', 'Slope_10_2', 'Slope_10_3', 'Slope_10_4', 'Slope_1_1', 'Slope_1_2', 'Slope_1_3', 'Slope_1_4', 'Slope_20_1', 'Slope_20_2', 'Slope_20_3', 'Slope_20_4', 'Slope_5_1', 'Slope_5_2', 'Slope_5_3', 'Slope_5_4', 'SpecK', 'Split Ratio', 'TP', 'TR', 'TRIX', 'TR_14WSM', 'TSI', 'UBB', 'UO', 'UlcerI', 'Volume', 'perc_D', 'perc_K', 'perc_R', 'stochRSI']
+    variable_list = ['Slope_half_20_2', 'Slope_half_20_3', 'Slope_half_20_4', 'Close_1_12', 'RCMA1', 'RCMA2', 'RCMA3', 'BP', 'TP', 'Close_10_19', 'Close_10_18', 'Close_10_17', 'Close_10_16', 'Close_10_15', 'Close_10_14', 'Close_10_13', 'Close_10_12', 'Close_10_11', 'Close_10_10', 'Close_1_30', 'FI1', 'Close_20_18', 'Close_20_19', 'RS', 'Close_20_14', 'Close_20_15', 'Close_20_16', 'Close_20_17', 'Close_20_10', 'Close_20_11', 'Close_20_12', 'Close_20_13', 'Adj High', 'LBB', 'ROC_75', 'SK11', 'Aroon_up', 'PPO_hist', 'SK12', 'SpecK', 'Close_20_20', 'Close_20_23', 'KST_sng_line', 'Close_20_22', 'PVO_hist', 'MACD_hist', 'FI13', 'Close_20_25', 'Close_20_24', 'Close_1_27', 'Close_1_26', 'Close_1_25', 'Close_1_24', 'Close_1_23', 'Close_1_22', 'Close_1_21', 'Close_1_20', 'Close_20_29', 'Close_20_28', 'Pred_Close_1_1', 'Close_20_26', 'Close_1_29', 'Pred_Close_1_4', 'Pred_Close_1_3', 'ROC_390', 'Pred_Close_1_2', 'RCMA4', 'ROC_65', 'Aroon_down', 'KST', 'DMN_14WSM', 'TSI', 'DMN', 'DMP', 'Close_10_30', 'EMV', 'Close_1_5', 'Chain_osc', 'Slope_half_10_4', 'Close_10_24', 'Close_1_28', 'DMP_14WSM', 'Close_20_30', 'MFI', 'Close_1_4', 'MFM', 'Close', 'MFV', 'Slope_10_1', 'ROC_10', 'ROC_11', 'ROC_14', 'ROC_15', 'PMO_sign_line', 'Slope_10_4', 'PMO_line', 'Slope_1_4', 'Slope_10_2', 'Slope_10_3', 'Slope_1_1', 'Slope_1_3', 'Slope_1_2', 'Close_5_12', 'Close_5_13', 'Close_1_6', 'Close_5_11', 'Close_10_22', 'Close_10_23', 'Close_5_14', 'Close_1_3', 'Close_5_18', 'ROC_265', 'Close_1_8', 'Close_1_9', 'Close_10_28', 'Close_10_29', 'SK5', 'Close_10_26', 'SK7', 'SK6', 'SK1', 'SK3',  'Close_5_10', 'Slope_5_3', 'Slope_5_2', 'SK9', 'SK8', 'Close_5_1', 'Close_5_2', 'Close_10_25', 'Close_5_4', 'Close_5_5', 'Close_5_6', 'Close_5_7', 'Close_5_8', 'Close_5_16', 'Close_20_27', 'NVI', 'Close_1_1', 'Close_10_7', 'Close_10_6', 'Close_10_5', 'ROC_100', 'Close_10_3', 'Close_10_20', 'Close_1_7', 'Close_10_21', 'Slope_20_2', 'perc_R', 'Close_10_9', 'Close_10_8', 'Close_10_27', 'perc_K', 'Low', 'perc_D', 'UlcerI', 'CGI', 'DI14N', 'Close_5_19', 'ROC_30', 'PBI', 'Adj Low', 'PVO_line', 'Close_1_10', 'Close_5_22', 'DI14P', 'Aroon_osc', 'Close_5_17', 'SK4', 'ATR', 'ADX', 'PVI', 'Close_5_30', 'TRIX', 'OBV', 'Close_10_4', 'ADL', 'CMF_20', 'Close_1_2', 'Slope_half_10_3', 'ROC_20', 'Slope_half_10_2', 'Slope_half_1_4', 'Slope_20_4', 'SK2', 'Slope_20_1', 'ROC_195', 'Slope_20_3', 'Slope_half_1_3', 'Slope_5_1', 'Close_20_21', 'Split Ratio', 'Open', 'Close_5_15', 'Close_5_29', 'Close_5_28', 'TR_14WSM', 'SK10', 'Close_5_23', 'MI', 'Close_5_21', 'Close_5_20', 'Close_5_27', 'Close_5_26', 'Close_5_25', 'Close_5_24', 'Close_20_6', 'Close_20_7', 'Close_20_4', 'Close_20_5', 'Close_10_2', 'Close_20_3', 'DX', 'Close_20_1', 'DPO', 'Close_20_8', 'Close_20_9', 'Close_1_18', 'Close_1_19', 'Close_1_16', 'Close_1_17', 'Close_1_14', 'Close_1_15', 'PPO', 'Close_1_13', 'MBB', 'Close_1_11', 'Volume', 'Close_10_1', 'Close_5_3', 'Close_20_2', 'CopCv', 'Adj Close', 'UO', 'BBB', 'Adj Volume', 'Slope_half_5_2', 'Slope_half_5_3', 'Slope_half_5_4', 'Slope_half_1_2', 'Close_5_9', 'Adj Open', 'RSI', 'Ex-Dividend', 'TR', 'ROC_530', 'UBB', 'High', 'Slope_5_4', 'ROC_40', 'MACD_line', 'stochRSI']
+    ##---
+    #variable_list = ['ADL', 'ADX', 'ATR', 'Adj Close', 'Adj High', 'Adj Low', 'Adj Open', 'Adj Volume', 'Aroon_down', 'Aroon_osc', 'Aroon_up', 'BBB', 'BP', 'CGI', 'CMF_20', 'Chain_osc', 'Close', 'Close_10_1', 'Close_10_10', 'Close_10_11', 'Close_10_12', 'Close_10_13', 'Close_10_14', 'Close_10_15', 'Close_10_16', 'Close_10_17', 'Close_10_18', 'Close_10_19', 'Close_10_2', 'Close_10_20', 'Close_10_21', 'Close_10_22', 'Close_10_23', 'Close_10_24', 'Close_10_25', 'Close_10_26', 'Close_10_27', 'Close_10_28', 'Close_10_29', 'Close_10_3', 'Close_10_30', 'Close_10_4', 'Close_10_5', 'Close_10_6', 'Close_10_7', 'Close_10_8', 'Close_10_9', 'Close_1_1', 'Close_1_10', 'Close_1_11', 'Close_1_12', 'Close_1_13', 'Close_1_14', 'Close_1_15', 'Close_1_16', 'Close_1_17', 'Close_1_18', 'Close_1_19', 'Close_1_2', 'Close_1_20', 'Close_1_21', 'Close_1_22', 'Close_1_23', 'Close_1_24', 'Close_1_25', 'Close_1_26', 'Close_1_27', 'Close_1_28', 'Close_1_29', 'Close_1_3', 'Close_1_30', 'Close_1_4', 'Close_1_5', 'Close_1_6', 'Close_1_7', 'Close_1_8', 'Close_1_9', 'Close_20_1', 'Close_20_10', 'Close_20_11', 'Close_20_12', 'Close_20_13', 'Close_20_14', 'Close_20_15', 'Close_20_16', 'Close_20_17', 'Close_20_18', 'Close_20_19', 'Close_20_2', 'Close_20_20', 'Close_20_21', 'Close_20_22', 'Close_20_23', 'Close_20_24', 'Close_20_25', 'Close_20_26', 'Close_20_27', 'Close_20_28', 'Close_20_29', 'Close_20_3', 'Close_20_30', 'Close_20_4', 'Close_20_5', 'Close_20_6', 'Close_20_7', 'Close_20_8', 'Close_20_9', 'Close_5_1', 'Close_5_10', 'Close_5_11', 'Close_5_12', 'Close_5_13', 'Close_5_14', 'Close_5_15', 'Close_5_16', 'Close_5_17', 'Close_5_18', 'Close_5_19', 'Close_5_2', 'Close_5_20', 'Close_5_21', 'Close_5_22', 'Close_5_23', 'Close_5_24', 'Close_5_25', 'Close_5_26', 'Close_5_27', 'Close_5_28', 'Close_5_29', 'Close_5_3', 'Close_5_30', 'Close_5_4', 'Close_5_5', 'Close_5_6', 'Close_5_7', 'Close_5_8', 'Close_5_9', 'CopCv', 'DI14N', 'DI14P', 'DMN', 'DMN_14WSM', 'DMP', 'DMP_14WSM', 'DPO', 'DX', 'EMV', 'Ex-Dividend', 'FI1', 'FI13', 'High', 'KST', 'KST_sng_line', 'LBB', 'Low', 'MACD_hist', 'MACD_line', 'MBB', 'MFI', 'MFM', 'MFV', 'MI', 'NVI', 'OBV', 'Open', 'PBI', 'PMO_line', 'PMO_sign_line', 'PPO', 'PPO_hist', 'PVI', 'PVO_hist', 'PVO_line', 'RCMA1', 'RCMA2', 'RCMA3', 'RCMA4', 'ROC_10', 'ROC_100', 'ROC_11', 'ROC_14', 'ROC_15', 'ROC_195', 'ROC_20', 'ROC_265', 'ROC_30', 'ROC_390', 'ROC_40', 'ROC_530', 'ROC_65', 'ROC_75', 'RS', 'RSI', 'SK1', 'SK10', 'SK11', 'SK12', 'SK2', 'SK3', 'SK4', 'SK5', 'SK6', 'SK7', 'SK8', 'SK9', 'Slope_10_1', 'Slope_10_2', 'Slope_10_3', 'Slope_10_4', 'Slope_1_1', 'Slope_1_2', 'Slope_1_3', 'Slope_1_4', 'Slope_20_1', 'Slope_20_2', 'Slope_20_3', 'Slope_20_4', 'Slope_5_1', 'Slope_5_2', 'Slope_5_3', 'Slope_5_4', 'SpecK', 'Split Ratio', 'TP', 'TR', 'TRIX', 'TR_14WSM', 'TSI', 'UBB', 'UO', 'UlcerI', 'Volume', 'perc_D', 'perc_K', 'perc_R', 'stochRSI']
     #variable_list = ['ADL', 'ADX', 'ATR']
-    mongoclient = MongoClient()
-    db = mongoclient.process_data
-    coll_name = sys.argv[1] + '_norm'
-    if coll_name in db.collection_names():
-        coll = db[coll_name]
-        train_x, train_y, val_x, val_y, test_x, test_y = Get_data(coll, variable_list, 'movement1')
-        ##---
-        best_variable_i = []
-        best_variable_l = []
-        all_output = open('all_output_logistical_regression.txt', 'wb')
-        best_output = open('best_output_logistical_regression.txt', 'wb')
-        variable_list_tmp = copy.deepcopy(variable_list)
-        while len(variable_list_tmp) > 0:
-            best_error = 2000000
-            best_i = -1
-            for i in range(0, len(variable_list)):
-                try_variable_i = copy.deepcopy(best_variable_i)
-                try_variable_l = copy.deepcopy(best_variable_l)
-                if i not in best_variable_i:
-                    try_variable_i.append(i)
-                    try_variable_i = sorted(try_variable_i)
-                    try_variable_l.append(variable_list[i])
-                    try_train_x = train_x[:, try_variable_i]
-                    try_val_x = val_x[:,try_variable_i]
-                    clf = linear_model.LogisticRegression()
-                    clf.fit(try_train_x, train_y)
-                    val_y_pred = clf.predict(try_val_x)
-                    train_y_pred = clf.predict(try_train_x)
-                    diff_val_y = sum(abs(val_y_pred - val_y)/2)
-                    diff_train_y = sum(abs(train_y_pred - train_y)/2)               
-                    print>>all_output, try_variable_l, diff_train_y, diff_val_y
-                    if diff_val_y < best_error:
-                        best_error = diff_val_y
-                        best_i = i
-                        clf_best = clf
-            file_name = 'AA_logistical_'+str(len(variable_list) - len(variable_list_tmp) + 1)+'.pkl'
-            joblib.dump(clf_best, file_name, compress=9)
-            best_variable_i.append(best_i)
-            best_variable_l.append(variable_list[best_i])
-            print>>best_output, best_variable_l, best_error
-            print variable_list[best_i]
-            variable_list_tmp.pop(variable_list_tmp.index(best_variable_l[-1]))
+    data_x = np.load(sys.argv[2])
+    data_y = np.load(sys.argv[3])    
+    print data_x.shape
+    data_no = data_x.shape[0]
+    train_x = data_x[range(0,int(0.7*data_no)), :]
+    train_y = data_y[range(0,int(0.7*data_no))]
+    val_x = data_x[range(int(0.7*data_no)+1, data_no), :]
+    val_y = data_y[range(int(0.7*data_no)+1, data_no)] 
+    ##---
+    best_variable_i = []
+    best_variable_l = []
+    all_output = open(sys.argv[1] + 'all_output_logistical_regression.txt', 'wb')
+    best_output = open(sys.argv[1] + 'best_output_logistical_regression.txt', 'wb')
+    variable_list_tmp = copy.deepcopy(variable_list)
+    while len(variable_list_tmp) > 0:
+        best_error = -1
+        best_i = -1
+        for i in range(0, len(variable_list)):
+            try_variable_i = copy.deepcopy(best_variable_i)
+            try_variable_l = copy.deepcopy(best_variable_l)
+            if i not in best_variable_i:
+                try_variable_i.append(i)
+                try_variable_i = sorted(try_variable_i)
+                try_variable_l.append(variable_list[i])
+                try_train_x = train_x[:, try_variable_i]
+                try_val_x = val_x[:,try_variable_i]
+                clf = linear_model.LogisticRegression()
+                clf.fit(try_train_x, train_y)
+                val_y_pred = clf.predict(try_val_x)
+                train_y_pred = clf.predict(try_train_x)
+                val_conf = Get_confusion_matrix(val_y, val_y_pred)
+                train_conf = Get_confusion_matrix(train_y, train_y_pred)
+                print>>all_output, try_variable_l
+                print>>all_output, 'train:'
+                print>>all_output, train_conf
+                print>>all_output, 'test:'
+                print>>all_output, val_conf
+                if val_conf['MCC'] > best_error:
+                    best_error = val_conf['MCC']
+                    best_val_conf = copy.deepcopy(val_conf)
+                    best_train_conf = copy.deepcopy(train_conf)
+                    best_i = i
+                    clf_best = clf
+        file_name = sys.argv[1] + '_logistical_'+str(len(variable_list) - len(variable_list_tmp) + 1)+'.pkl'
+        joblib.dump(clf_best, file_name, compress=9)
+        best_variable_i.append(best_i)
+        best_variable_l.append(variable_list[best_i])
+        print>>best_output, best_variable_l
+        print>>best_output, 'test:'
+        print>>best_output, best_val_conf
+        print>>best_output, 'train:'
+        print>>best_output, best_train_conf
+        print variable_list[best_i]
+        variable_list_tmp.pop(variable_list_tmp.index(best_variable_l[-1]))
 
 
 #            joblib.dump(clf, 'AA_logistical.pkl', compress=9)

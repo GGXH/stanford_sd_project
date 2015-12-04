@@ -119,14 +119,14 @@ if __name__ == '__main__':
                 model_param = [pen, c_reg]
                 Fit_model_output_result(clf, f, file_name_pre, model_param, train_x, train_y, val_x, val_y)
     elif sys.argv[2] == 'svm':
-        for c_reg in [0.001]: #[0.001, 0.01, 0.1, 1, 10, 100, 1000]:
+        for c_reg in [0.01]: #[0.001, 0.01, 0.1, 1, 10, 100, 1000]:
             for kern_fun in ['poly']:# ['linear', 'poly', 'rbf', 'sigmoid']:
                 if kern_fun in ['rbf', 'poly', 'sigmoid']:
-                    for gam_coef in ['auto']:  #['auto', 0.001, 0.01, 0.1, 0.5, 0.8]:
+                    for gam_coef in ['auto']: #['auto', 0.001, 0.01, 0.1, 0.5, 0.8]:
                         if kern_fun in ['poly', 'sigmoid']:
                             for coef0_val in [6, 7, 8, 9]: #[0.001, 0.01, 0.1, 1, 10]:
                                 if kern_fun == 'poly':
-                                    for deg_coef in [3, 4, 5]: #[1, 2, 3, 5, 8, 10]:
+                                    for deg_coef in [3]: #[1, 2, 3, 5, 8, 10]:
                                         clf = svm.SVC(C=c_reg, kernel=kern_fun, gamma=gam_coef, coef0=coef0_val, degree=deg_coef)
                                         model_param = [c_reg, kern_fun, gam_coef, coef0_val, deg_coef]
                                         val_conf = Fit_model_output_result(clf, f, file_name_pre, model_param, train_x, train_y, val_x, val_y)
